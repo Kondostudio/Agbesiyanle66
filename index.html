@@ -5,22 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agbesiyanle 2025</title>
     <style>
-        #container {
-            position: relative;
-            width: 1080px;
-            height: 1080px;
-            background-size: cover;
-            margin-bottom: 20px;
+        /* Styles généraux */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
 
-        #userImage {
-            position: absolute;
-            top: 81px; /* Positionnement Y de la zone rouge */
-            left: 474px; /* Positionnement X de la zone rouge */
-            width: 532px; /* Largeur de la zone rouge */
-            height: 725px; /* Hauteur de la zone rouge */
-            object-fit: cover; /* Pour que l'image s'adapte bien à la zone */
-            display: none; /* L'image ne sera visible qu'après importation */
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            margin-bottom: 20px;
+            max-width: 1080px; /* Limite la largeur maximale */
+            margin: 0 auto;
         }
 
         #uploadForm {
@@ -34,10 +39,70 @@
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         button:hover {
             background-color: #4f2561;
+        }
+
+        /* Image importée dans la zone rouge */
+        #userImage {
+            position: absolute;
+            top: 81px;
+            left: 474px;
+            width: 532px;
+            height: 725px;
+            object-fit: cover;
+            display: none;
+        }
+
+        /* Section de téléchargement du visuel final */
+        #downloadBtnContainer {
+            text-align: center;
+            display: none;
+            margin-top: 20px;
+        }
+
+        /* Styles responsive pour mobile */
+        @media (max-width: 768px) {
+            #container {
+                width: 100%;
+                height: auto;
+                padding: 10px;
+            }
+
+            #userImage {
+                top: 40px; /* Ajuste la position de l'image importée pour les mobiles */
+                left: 10%;
+                width: 80%; /* Ajuste la taille de l'image importée sur mobile */
+                height: auto;
+            }
+
+            button {
+                width: 100%; /* Button takes full width on mobile */
+                font-size: 18px; /* Increase font size for better accessibility */
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 10px;
+            }
+        }
+
+        /* Très petite taille (tablette portrait) */
+        @media (max-width: 480px) {
+            #userImage {
+                top: 20px;
+                left: 5%;
+                width: 90%;
+                height: auto;
+            }
+
+            button {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -51,11 +116,10 @@
     </div>
 
     <div id="container">
-        <!-- Prévisualisation de l'image importée dans la zone rouge -->
         <img id="userImage" style="display: none;" />
     </div>
 
-    <div id="downloadBtnContainer" style="text-align:center;display:none;">
+    <div id="downloadBtnContainer">
         <button onclick="downloadFinalImage()">Télécharger le visuel final</button>
     </div>
 
