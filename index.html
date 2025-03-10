@@ -10,37 +10,18 @@
             position: relative;
             width: 1080px;
             height: 1080px;
-            background-image: url('visuel_de_base.png'); /* Image téléchargée */
-            background-size: cover;
             margin-bottom: 20px;
-        }
-
-        /* Image importée, placée derrière le visuel de base */
-        #userImage {
-            position: absolute;
-            top: 81px; /* Positionnement Y de la zone rouge */
-            left: 474px; /* Positionnement X de la zone rouge */
-            width: 532px; /* Largeur de la zone rouge */
-            height: 725px; /* Hauteur de la zone rouge */
-            object-fit: cover; /* Pour que l'image s'adapte bien à la zone */
-            display: none; /* L'image ne sera visible qu'après importation */
         }
 
         #uploadForm {
             text-align: center;
-            margin-top: 20px;
-        }
-
-        input[type="file"] {
-            margin: 10px 0;
+            margin: 20px;
         }
 
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
             background-color: #5f3076;
-            color: #fff;
+            color: #ffffff;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
         }
@@ -60,68 +41,64 @@
     </div>
 
     <div id="container">
-        <!-- Visuel de base avec la zone rouge -->
-        <img id="userImage" style="display: none;" />
+        <canvas id="canvas" width="1080" height="1080" style="display: none;"></canvas>
     </div>
 
-    <div id="downloadBtnContainer" style="text-align: center; display: none;">
-        <!-- Bouton pour télécharger l'image finale personnalisée -->
+    <div id="downloadBtnContainer" style="text-align:center;display:none;">
         <button onclick="downloadFinalImage()">Télécharger le visuel final</button>
     </div>
 
     <script>
-        let userImage = null;
+        let userImageSrc = null;
 
-        // Fonction qui charge l'image téléchargée
+        // Fonction pour charger l'image téléchargée
         function loadImage() {
-            const fileInput = document.getElementById('photoInput');
-            const userImageElement = document.getElementById('userImage');
-            const downloadBtnContainer = document.getElementById('downloadBtnContainer');
+            const input = document.getElementById('photoInput');
+            const container = document.getElementById('container');
+            const downloadBtn = document.getElementById('downloadBtnContainer');
 
-            if (fileInput.files && fileInput.files[0]) {
+            if (input.files && input.files[0]) {
                 const reader = new FileReader();
+                reader.onload = function (e) {
+                    userImageSrc = e.target.result;
 
-                reader.onload = function(e) {
-                    // Afficher l'image téléchargée et la redimensionner
-                    userImageElement.src = e.target.result;
-                    userImageElement.style.display = 'block'; // Afficher l'image dans la zone rouge
+                    // Afficher l'image utilisateur dans la zone rouge (derrière l'image de base)
+                    container.style.backgroundImage = `url('${userImageSrc}')`;
 
-                    // Afficher le bouton de téléchargement
+                    // Afficher bouton téléchargement
                     downloadBtnContainer.style.display = 'block';
-
-                    // Stocker l'image pour la modification future
-                    userImage = e.target.result;
                 };
 
-                // Lire le fichier comme une URL de données
-                reader.readAsDataURL(fileInput.files[0]);
+                userImageSrc = URL.createObjectURL(input.files[0]);
+                reader.readAsDataURL(input.files[0]);
             } else {
-                alert("Aucune image sélectionnée.");
+                alert("Veuillez sélectionner une image.");
             }
         }
 
         // Fonction pour télécharger le visuel final personnalisé
         function downloadFinalImage() {
-            const canvas = document.createElement('canvas');
+            const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext('2d');
 
             // Créer un image de base
             const baseImage = new Image();
-            baseImage.src = 'visuel_de_base.png';
+            baseImage.src = 'visuel_de_base.png'; // Remplacez par l'URL de votre visuel de base
 
             baseImage.onload = function() {
                 canvas.width = 1080;
                 canvas.height = 1080;
 
-                // Dessiner l'image de base en premier (en arrière-plan)
-                ctx.drawImage(baseImage, 0, 0);
+                // 1. Dessiner l'image de l'utilisateur en premier (derrière le visuel de base)
+                const userImage = new Image();
+                userImage.src = userImageSrc;
 
-                // Ajouter l'image de l'utilisateur dans la zone rouge (derrière le visuel de base)
-                const userImageElement = new Image();
-                userImageElement.src = userImage;
-                userImageElement.onload = function() {
-                    // Dessiner l'image importée dans la zone rouge, derrière l'image de base
-                    ctx.drawImage(userImageElement, 474, 81, 532, 725); // Position et taille de l'image
+                userImage.onload = function() {
+                    // Dessiner l'image utilisateur dans la zone rouge
+                    ctx.drawImage(userImage, 474, 81, 532, 725); // Position et taille de l'image
+
+                    // 2. Dessiner l'image de base sur le canevas (par-dessus l'image importée)
+                    ctx.drawImage(baseImage, 0, 0);
 
                     // Créer un lien pour télécharger l'image finale
                     const finalImage = canvas.toDataURL('image/png');
