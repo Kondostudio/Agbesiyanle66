@@ -21,10 +21,10 @@
         #container {
             position: relative;
             width: 100%;
-            height: 100%;
+            height: auto;
             max-width: 1080px; /* Limite la largeur maximale */
             margin: 0 auto;
-            background-size: cover;
+            background-size: contain; /* Permet à l'image de s'adapter à l'espace */
         }
 
         #userImage {
@@ -42,6 +42,25 @@
             margin: 20px;
         }
 
+        /* Personnalisation du bouton "Choisir un fichier" */
+        input[type="file"] {
+            font-size: 16px;
+            padding: 15px;
+            background-color: #5f3076;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 80%;  /* Adaptation responsive */
+            max-width: 300px;  /* Limite la largeur */
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        input[type="file"]:hover {
+            background-color: #4f2561;
+        }
+
         button {
             background-color: #5f3076;
             color: #ffffff;
@@ -50,7 +69,9 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            width: 100%; /* Ajuster la largeur pour mobile */
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto; /* Centrer le bouton */
         }
 
         button:hover {
@@ -68,7 +89,7 @@
             #container {
                 width: 100%;
                 height: auto;
-                padding: 10px;
+                padding: 20px;
             }
 
             #userImage {
@@ -80,10 +101,18 @@
 
             button {
                 font-size: 18px;
+                padding: 15px 0;
             }
 
             h1 {
                 font-size: 1.5rem;
+                margin-top: 10px;
+            }
+
+            #uploadForm input {
+                width: 100%;
+                padding: 10px;
+                margin-top: 10px;
             }
         }
 
@@ -98,6 +127,10 @@
 
             button {
                 font-size: 16px;
+            }
+
+            #uploadForm input {
+                padding: 12px;
             }
         }
     </style>
