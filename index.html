@@ -1,227 +1,120 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agbesiyanle 2025</title>
-    <style>
-        /* Styles généraux */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        #container {
-            position: relative;
-            width: 100%;
-            height: auto;
-            max-width: 1080px; /* Limite la largeur maximale */
-            margin: 0 auto;
-        }
-
-        #uploadForm {
-            text-align: center;
-            margin: 20px;
-        }
-
-        input[type="file"] {
-            font-size: 16px;
-            padding: 15px;
-            background-color: #5f3076;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 80%;  /* Adaptation responsive */
-            max-width: 300px;  /* Limite la largeur */
-            margin-top: 20px;
-        }
-
-        input[type="file"]:hover {
-            background-color: #4f2561;
-        }
-
-        button {
-            background-color: #5f3076;
-            color: #ffffff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            max-width: 300px;
-            margin: 10px auto; /* Centrer le bouton */
-        }
-
-        button:hover {
-            background-color: #4f2561;
-        }
-
-        #downloadBtnContainer {
-            text-align: center;
-            display: none;
-            margin-top: 20px;
-        }
-
-        /* Styles responsive pour mobile */
-        @media (max-width: 768px) {
-            #container {
-                width: 100%;
-                height: auto;
-                padding: 20px;
-            }
-
-            button {
-                font-size: 18px;
-                padding: 15px 0;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-                margin-top: 10px;
-            }
-
-            #uploadForm input {
-                width: 100%;
-                padding: 10px;
-                margin-top: 10px;
-            }
-        }
-
-        /* Très petite taille (tablette portrait) */
-        @media (max-width: 480px) {
-            button {
-                font-size: 16px;
-            }
-
-            #uploadForm input {
-                padding: 12px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agbesiyanle 2025</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background-color: #f4f4f4;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 15px;
+    }
+    #canvas {
+      max-width: 90%;
+      height: auto;
+      border: 2px solid #ddd;
+      margin: 10px auto;
+      border-radius: 5px;
+    }
+    .button {
+      background-color: #5f3076;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 90%;
+      max-width: 300px;
+      margin: 10px auto;
+      display: block;
+    }
+    .button:hover {
+      background-color: #4f2561;
+    }
+    #downloadBtnContainer {
+      display: none;
+      margin-bottom: 30px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Bienvenue à la campagne de participation Agbesiyanle 2025</h1>
-    <p>Veuillez télécharger votre photo pour l'ajuster à notre visuel !</p>
+  <h1>Campagne de participation Agbesiyanle 2025</h1>
+  <input type="file" id="photoInput" accept="image/*" class="button">
+  <button onclick="loadImage()" class="button">Importer</button>
 
-    <div id="uploadForm">
-        <input type="file" id="photoInput" accept="image/*" />
-        <button onclick="loadImage()">Importer</button>
-    </div>
+  <canvas id="canvas" width="1080" height="1080"></canvas>
 
-    <div id="container">
-        <canvas id="canvas" width="1080" height="1080"></canvas>
-    </div>
+  <div id="downloadBtnContainer">
+    <button onclick="downloadFinalImage()" class="button">Télécharger le visuel final</button>
+  </div>
 
-    <div id="downloadBtnContainer">
-        <button onclick="downloadFinalImage()">Télécharger le visuel final</button>
-    </div>
+  <script>
+    let userImageSrc = null;
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const downloadBtnContainer = document.getElementById('downloadBtnContainer');
 
-    <script>
-        let userImageSrc = null;
+    function loadImage() {
+      const input = document.getElementById('photoInput');
 
-        // Fonction pour charger l'image téléchargée et afficher la prévisualisation
-        function loadImage() {
-            const input = document.getElementById('photoInput');
-            const downloadBtnContainer = document.getElementById('downloadBtnContainer');
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          userImageSrc = e.target.result;
+          renderPreview();
+        };
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        alert("Veuillez sélectionner une image.");
+      }
+    }
 
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    userImageSrc = e.target.result;
+    function renderPreview() {
+      const baseImage = new Image();
+      baseImage.src = 'visuel_de_base.png'; // 👈 Remplacer par ton fichier image exact
+      baseImage.onload = function() {
 
-                    // Créer l'image importée pour la prévisualisation
-                    const userImage = new Image();
-                    userImage.src = userImageSrc;
+        // Dessiner d'abord l'image importée
+        const userImage = new Image();
+        userImage.src = userImageSrc;
+        userImage.onload = function() {
 
-                    userImage.onload = function() {
-                        // Effacer l'ancien canevas pour la nouvelle prévisualisation
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // Nettoyage du canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                        // Dessiner l'image de base (visuel)
-                        const baseImage = new Image();
-                        baseImage.src = 'visuel_de_base.png'; // Remplacez par le chemin de votre visuel de base
+          // Dessin de l'image importée (redimensionnement proportionnel)
+          const frameX = 474, frameY = 81, frameW = 532, frameH = 725;
 
-                        baseImage.onload = function() {
-                            // Calculer la taille du canevas pour qu'il soit responsive
-                            const canvasWidth = canvas.width;
-                            const canvasHeight = canvas.height;
+          // Calcul du redimensionnement proportionnel
+          let ratio = Math.max(frameW / userImage.width, frameH / userImage.height);
+          let newWidth = userImage.width * ratio;
+          let newHeight = userImage.height * ratio;
+          let offsetX = frameX + (frameW - newWidth) / 2;
+          let offsetY = frameY + (frameH - newHeight) / 2;
 
-                            // Dessiner l'image de base de manière responsive
-                            const scaleX = canvasWidth / 1080;
-                            const scaleY = canvasHeight / 1080;
-                            ctx.drawImage(baseImage, 0, 0, 1080 * scaleX, 1080 * scaleY);
+          ctx.drawImage(userImage, offsetX, offsetY, newWidth, newHeight);
 
-                            // Dessiner l'image importée dans la zone rouge de manière responsive
-                            const userImageWidth = 532 * scaleX;
-                            const userImageHeight = 725 * scaleY;
+          // Dessin du visuel de base par-dessus
+          ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
-                            // Calcul du redimensionnement proportionnel
-                            const aspectRatio = userImage.width / userImage.height;
-                            if (userImageWidth / userImageHeight > aspectRatio) {
-                                userImageHeight = userImageWidth / aspectRatio;
-                            } else {
-                                userImageWidth = userImageHeight * aspectRatio;
-                            }
+          // Afficher le bouton Télécharger
+          downloadBtnContainer.style.display = 'block';
+        };
+      };
+    }
 
-                            ctx.drawImage(userImage, 474 * scaleX, 81 * scaleY, userImageWidth, userImageHeight);
-
-                            // Afficher le bouton de téléchargement
-                            downloadBtnContainer.style.display = 'block'; // Afficher le bouton
-                        };
-                    };
-                };
-
-                userImageSrc = URL.createObjectURL(input.files[0]);
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                alert("Veuillez sélectionner une image.");
-            }
-        }
-
-        // Fonction pour télécharger le visuel final personnalisé
-        function downloadFinalImage() {
-            const canvas = document.getElementById("canvas");
-            const ctx = canvas.getContext('2d');
-
-            // Créer un image de base
-            const baseImage = new Image();
-            baseImage.src = 'visuel_de_base.png'; // Remplacez par l'URL de votre visuel de base
-
-            baseImage.onload = function() {
-                canvas.width = 1080;
-                canvas.height = 1080;
-
-                // 1. Dessiner l'image de l'utilisateur en premier (derrière le visuel de base)
-                const userImage = new Image();
-                userImage.src = userImageSrc;
-
-                userImage.onload = function() {
-                    // Dessiner l'image utilisateur dans la zone rouge
-                    ctx.drawImage(userImage, 474, 81, 532, 725); // Position et taille de l'image
-
-                    // 2. Dessiner l'image de base sur le canevas (par-dessus l'image importée)
-                    ctx.drawImage(baseImage, 0, 0);
-
-                    // Créer un lien pour télécharger l'image finale
-                    const finalImage = canvas.toDataURL('image/png');
-                    const link = document.createElement('a');
-                    link.href = finalImage;
-                    link.download = 'visuel_final_personnalise.png';
-                    link.click();
-                };
-            };
-        }
-    </script>
+    function downloadFinalImage() {
+      const link = document.createElement('a');
+      link.download = 'visuel_final_personnalise.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
 </body>
 </html>
